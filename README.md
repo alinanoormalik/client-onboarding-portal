@@ -15,6 +15,7 @@ in one centralised system, replacing spreadsheets and email threads.
 - **UK address lookup:** type an address or postcode, choose a suggestion, and the structured
   address (line 1, city, county, postcode, country) is saved against the organisation
 - Input validation (frontend and backend) and clear error messages
+- Admin screen to create and list staff users.
 
 ## Tech stack
 React (Vite) · Python FastAPI · PostgreSQL · SQLAlchemy · Alembic · PyJWT · bcrypt · httpx
@@ -87,7 +88,7 @@ may be missing from suggestions; all fields remain editable after selecting a su
 | Delete organisations | no | yes |
 | Create users | no | yes |
 
-New users are created by an admin via `POST /auth/users` (Swagger docs).
+New users are created by an admin via `POST /auth/users` (Swagger docs) OR New users are created by an admin from the Users screen (or POST /auth/users).
 
 ## API overview
 | Area | Endpoints |

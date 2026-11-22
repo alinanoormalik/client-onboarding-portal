@@ -293,3 +293,10 @@ td.actions > * {
   color: #64748b;
   font-weight: 400;
 }
+.alert.success { 
+    background: #d1fae5; 
+    color: #065f46; 
+    padding: 10px 14px;
+     border-radius: 6px;
+      margin-bottom: 16px;
+     }

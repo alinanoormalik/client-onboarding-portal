@@ -3,6 +3,7 @@ import { ProtectedRoute, useAuth } from "./auth.jsx";
 import Login from "./pages/Login.jsx";
 import OrganisationList from "./pages/OrganisationList.jsx";
 import OrganisationForm from "./pages/OrganisationForm.jsx";
+import Users from "./pages/Users.jsx";
 
 function Header() {
   const { user, logout } = useAuth();
@@ -12,6 +13,7 @@ function Header() {
       {user && (
         <div className="topbar-right">
           <span className="user-label">{user.full_name} ({user.role})</span>
+          {user.role === "admin" && <Link to="/users" className="btn">Users</Link>}
           <Link to="/organisations/new" className="btn">+ New Client</Link>
           <button className="btn" onClick={logout}>Log out</button>
         </div>
@@ -31,6 +33,7 @@ export default function App() {
             <Route path="/" element={<OrganisationList />} />
             <Route path="/organisations/new" element={<OrganisationForm />} />
             <Route path="/organisations/:id/edit" element={<OrganisationForm />} />
+            <Route path="/users" element={<Users />} />
           </Route>
           <Route path="*" element={<p>Page not found.</p>} />
         </Routes>
