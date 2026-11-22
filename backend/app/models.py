@@ -58,6 +58,23 @@ class Organisation(Base):
 
     address = Column(String(500), nullable=True)
 
+    # New address fields
+    address_line1 = Column(String(200), nullable=True)
+
+    address_line2 = Column(String(200), nullable=True)
+
+    city = Column(String(100), nullable=True)
+
+    county = Column(String(100), nullable=True)
+
+    postcode = Column(String(10), nullable=True)
+
+    country = Column(
+        String(100),
+        nullable=True,
+        server_default="United Kingdom",
+    )
+
     status = Column(String(50), nullable=False, default="pending")
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())
@@ -97,6 +114,13 @@ class Contact(Base):
     phone = Column(String(30), nullable=True)
 
     job_title = Column(String(150), nullable=True)
+
+    # New contact field
+    contact_type = Column(
+        String(50),
+        nullable=False,
+        server_default="general",
+    )
 
     is_primary = Column(Boolean, default=False, nullable=False)
 

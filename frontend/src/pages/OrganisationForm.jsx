@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import api, { errorMessage } from "../api";
+import AddressLookup from "../components/AddressLookup.jsx";
 
 const emptyOrg = {
-  name: "", registration_number: "", industry: "", email: "",
-  phone: "", website: "", address: "", status: "pending",
+  name: "", registration_number: "", industry: "", email: "", phone: "",
+  website: "", address: "", address_line1: "", address_line2: "", city: "",
+  county: "", postcode: "", country: "United Kingdom", status: "pending",
 };
 const emptyContact = {
-  full_name: "", email: "", phone: "", job_title: "", is_primary: false,
+  full_name: "", email: "", phone: "", job_title: "",
+  contact_type: "general", is_primary: false,
 };
 
 // Convert blank strings to null so the API stores NULL, not ""
@@ -47,6 +50,18 @@ export default function OrganisationForm() {
   }, [id, isEdit]);
 
   const setOrgField = (e) => setOrg({ ...org, [e.target.name]: e.target.value });
+
+  const applyAddress = (a) =>
+    setOrg((o) => ({
+      ...o,
+      address: a.label,
+      address_line1: a.address_line1 || "",
+      address_line2: a.address_line2 || "",
+      city: a.city || "",
+      county: a.county || "",
+      postcode: a.postcode || "",
+      country: a.country || "United Kingdom",
+    }));
 
   const setContactField = (index, field, value) =>
     setContacts(contacts.map((c, i) => (i === index ? { ...c, [field]: value } : c)));
@@ -104,15 +119,40 @@ export default function OrganisationForm() {
           <label>Website
             <input name="website" value={org.website} onChange={setOrgField} placeholder="https://" />
           </label>
-          <label className="full">Address
-            <input name="address" value={org.address} onChange={setOrgField} maxLength={500} />
-          </label>
           <label>Status
             <select name="status" value={org.status} onChange={setOrgField}>
               <option value="pending">Pending</option>
               <option value="active">Active</option>
               <option value="inactive">Inactive</option>
             </select>
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Postal address</legend>
+        <div className="grid">
+          <div className="full">
+            <AddressLookup onSelect={applyAddress} />
+          </div>
+          <label>Address line 1
+            <input name="address_line1" value={org.address_line1} onChange={setOrgField} maxLength={200} />
+          </label>
+          <label>Address line 2
+            <input name="address_line2" value={org.address_line2} onChange={setOrgField} maxLength={200} />
+          </label>
+          <label>City
+            <input name="city" value={org.city} onChange={setOrgField} maxLength={100} />
+          </label>
+          <label>County
+            <input name="county" value={org.county} onChange={setOrgField} maxLength={100} />
+          </label>
+          <label>Postcode
+            <input name="postcode" value={org.postcode} maxLength={10}
+              onChange={(e) => setOrg({ ...org, postcode: e.target.value.toUpperCase() })} />
+          </label>
+          <label>Country
+            <input name="country" value={org.country} onChange={setOrgField} maxLength={100} />
           </label>
         </div>
       </fieldset>
@@ -137,6 +177,16 @@ export default function OrganisationForm() {
               <label>Phone
                 <input value={c.phone} maxLength={30}
                   onChange={(e) => setContactField(i, "phone", e.target.value)} />
+              </label>
+              <label>Contact type
+                <select value={c.contact_type}
+                  onChange={(e) => setContactField(i, "contact_type", e.target.value)}>
+                  <option value="general">General</option>
+                  <option value="billing">Billing</option>
+                  <option value="technical">Technical</option>
+                  <option value="legal">Legal</option>
+                  <option value="other">Other</option>
+                </select>
               </label>
             </div>
             <div className="contact-actions">

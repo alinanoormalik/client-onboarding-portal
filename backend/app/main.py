@@ -1,12 +1,13 @@
+import os
+
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 from sqlalchemy.orm import Session
-from app.routers import auth, organisations
-from app.security import get_current_user
 
 from app.database import get_db
-from app.routers import organisations
+from app.routers import addresses, auth, contacts, organisations
+from app.security import get_current_user
 
 app = FastAPI(
     title="Client Onboarding Portal API",
@@ -14,15 +15,26 @@ app = FastAPI(
     version="1.0.0",
 )
 
+origins = [
+    o.strip()
+    for o in os.getenv(
+        "ALLOWED_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173"
+    ).split(",")
+    if o.strip()
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-app.include_router(organisations.router)
+app.include_router(auth.router)
+app.include_router(organisations.router, dependencies=[Depends(get_current_user)])
+app.include_router(contacts.router, dependencies=[Depends(get_current_user)])
+app.include_router(addresses.router, dependencies=[Depends(get_current_user)])
 
 
 @app.get("/")
@@ -43,6 +55,3 @@ def db_check(db: Session = Depends(get_db)):
         "database": "PostgreSQL",
         "message": "Database connection successful!",
     }
-
-app.include_router(auth.router)
-app.include_router(organisations.router, dependencies=[Depends(get_current_user)])
